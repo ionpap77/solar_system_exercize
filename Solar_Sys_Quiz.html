@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Βάλε τους Πλανήτες στη Σωστή Θέση!</title>
+<style>
+  body {
+    background: radial-gradient(circle at center, #001020, #000);
+    color: white;
+    text-align: center;
+    overflow: hidden;
+    font-family: "Comic Sans MS", sans-serif;
+  }
+
+  h1 {
+    margin: 10px;
+    font-size: 1.5em;
+  }
+
+  #gameArea {
+    position: relative;
+    width: 100%;
+    height: 80vh;
+    margin: 0 auto;
+    border: 2px solid rgba(255,255,255,0.2);
+  }
+
+  .planet {
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    cursor: grab;
+    user-select: none;
+    transition: transform 0.3s;
+  }
+
+  .planet.correct {
+    transform: scale(1.2);
+    animation: bounce 0.6s;
+  }
+
+  @keyframes bounce {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.3); }
+  }
+
+  .target {
+    position: absolute;
+    width: 90px;
+    height: 90px;
+    border: 2px dashed rgba(255,255,255,0.2);
+    border-radius: 50%;
+  }
+
+  #message {
+    font-size: 1.3em;
+    margin-top: 10px;
+  }
+</style>
+</head>
+
+<body>
+  <h1>Βάλε τους Πλανήτες στη Σωστή Θέση!</h1>
+  <div id="gameArea">
+    <!-- Θέσεις (ρύθμισέ τες όπως θέλεις γύρω από τον Ήλιο) -->
+    <div class="target" id="target1" style="left:120px; top:220px;"></div>
+    <div class="target" id="target2" style="left:220px; top:150px;"></div>
+    <div class="target" id="target3" style="left:320px; top:250px;"></div>
+    <div class="target" id="target4" style="left:420px; top:180px;"></div>
+    <div class="target" id="target5" style="left:520px; top:280px;"></div>
+    <div class="target" id="target6" style="left:620px; top:200px;"></div>
+    <div class="target" id="target7" style="left:720px; top:320px;"></div>
+    <div class="target" id="target8" style="left:820px; top:230px;"></div>
+
+    <!-- Πλανήτες (βάλε εδώ τα δικά σου GIFs) -->
+    <img src="planet1.gif" class="planet" id="planet1" draggable="true">
+    <img src="planet2.gif" class="planet" id="planet2" draggable="true">
+    <img src="planet3.gif" class="planet" id="planet3" draggable="true">
+    <img src="planet4.gif" class="planet" id="planet4" draggable="true">
+    <img src="planet5.gif" class="planet" id="planet5" draggable="true">
+    <img src="planet6.gif" class="planet" id="planet6" draggable="true">
+    <img src="planet7.gif" class="planet" id="planet7" draggable="true">
+    <img src="planet8.gif" class="planet" id="planet8" draggable="true">
+  </div>
+
+  <div id="message"></div>
+
+  <!-- Ήχος επιβράβευσης -->
+  <audio id="successSound" src="success.mp3" preload="auto"></audio>
+
+<script>
+const planets = Array.from(document.querySelectorAll(".planet"));
+const targets = document.querySelectorAll(".target");
+const successSound = document.getElementById("successSound");
+let placed = 0;
+
+// ✅ Τυχαία διάταξη των πλανητών κάθε φορά
+window.addEventListener("load", () => {
+  const startY = 500; // ύψος έναρξης
+  const startXPositions = shuffle([50, 150, 250, 350, 450, 550, 650, 750]);
+  planets.forEach((planet, i) => {
+    planet.style.left = startXPositions[i] + "px";
+    planet.style.top = startY + "px";
+  });
+});
+
+// Λειτουργία drag & drop
+planets.forEach((planet) => {
+  planet.addEventListener("dragstart", dragStart);
+});
+
+targets.forEach((target, index) => {
+  target.addEventListener("dragover", dragOver);
+  target.addEventListener("drop", (event) => drop(event, index + 1));
+});
+
+function dragStart(e) {
+  e.dataTransfer.setData("text", e.target.id);
+}
+
+function dragOver(e) {
+  e.preventDefault();
+}
+
+function drop(e, targetNum) {
+  e.preventDefault();
+  const planetId = e.dataTransfer.getData("text");
+  const planet = document.getElementById(planetId);
+  const correctTarget = "target" + planetId.replace("planet", "");
+
+  if (e.target.id === correctTarget) {
+    e.target.style.borderColor = "lime";
+    planet.style.left = e.target.style.left;
+    planet.style.top = e.target.style.top;
+    planet.classList.add("correct");
+    planet.draggable = false;
+    placed++;
+    successSound.currentTime = 0;
+    successSound.play();
+    document.getElementById("message").innerText = "Μπράβο!";
+    if (placed === targets.length) {
+      document.getElementById("message").innerText = "Μπράβο μικρέ αστροναύτη! 🚀";
+    }
+  } else {
+    document.getElementById("message").innerText = "Δοκίμασε ξανά!";
+  }
+}
+
+// 🔀 Συνάρτηση για ανακάτεμα (Fisher–Yates shuffle)
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+</script>
+</body>
+</html>

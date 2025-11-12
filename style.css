@@ -1,0 +1,77 @@
+/* === Γενικό Στυλ Σελίδας === */
+body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-image: url('images/background.jpg');
+  background-size: cover;
+  background-position: center;
+  font-family: 'Comic Sans MS', sans-serif;
+}
+
+/* === Ήλιος === */
+#sun {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  width: 250px; /* λίγο πιο μεγάλος */
+  z-index: 2;
+}
+
+/* === Πλανήτες === */
+.planet {
+  position: absolute;
+  cursor: grab;
+  user-select: none;
+  transition: transform 0.2s ease;
+}
+
+.planet:active {
+  cursor: grabbing;
+  transform: scale(1.1);
+}
+
+/* === Αναλογίες Πλανητών === */
+#planet1 { width: 60px; }   /* Ερμής – μικρός */
+#planet2 { width: 80px; }   /* Αφροδίτη */
+#planet3 { width: 85px; }   /* Γη */
+#planet4 { width: 70px; }   /* Άρης */
+#planet5 { width: 130px; }  /* Δίας – ο μεγαλύτερος */
+#planet6 { width: 110px; }  /* Κρόνος – με δακτύλιο */
+#planet7 { width: 90px; }   /* Ουρανός */
+#planet8 { width: 85px; }   /* Ποσειδώνας */
+
+/* === Περιοχή Στόχων === */
+.target-zone {
+  position: absolute;
+  border: 2px dashed rgba(255, 255, 255, 0.5);
+  border-radius: 50%;
+  width: 100px;
+  height: 100px;
+  pointer-events: none;
+  transition: border 0.3s;
+}
+
+.target-zone.correct {
+  border: 3px solid limegreen;
+}
+
+/* === Μήνυμα Επιτυχίας === */
+#success-message {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 2em;
+  color: yellow;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 20px 30px;
+  border-radius: 20px;
+  display: none;
+  animation: pop 0.6s ease;
+}
+
+@keyframes pop {
+  from { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+  to { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+}

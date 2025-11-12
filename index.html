@@ -1,266 +1,129 @@
 <!DOCTYPE html>
 <html lang="el">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Το Ηλιακό Σύστημα!</title>
-<style>
-  body {
-    margin: 0;
-    overflow: hidden;
-    text-align: center;
-    color: white;
-    font-family: "Comic Sans MS", sans-serif;
-    background: url('background.jpg') center/cover no-repeat;
-  }
-
-  h1 {
-    margin: 10px;
-    font-size: 1.8em;
-    color: #ffdf6c;
-    text-shadow: 2px 2px 6px #000;
-  }
-
-  #gameArea {
-    position: relative;
-    width: 100%;
-    height: 80vh;
-    margin: 0 auto;
-  }
-
-  #sun {
-    position: absolute;
-    left: 25%;
-    top: 85%;
-    transform: translate(-50%, -50%);
-    width: 350px;
-    height: 350px;
-    animation: glow 2s infinite alternate;
-    pointer-events: none;
-  }
-
-  @keyframes glow {
-    from { filter: drop-shadow(0 0 10px yellow); }
-    to { filter: drop-shadow(0 0 25px orange); }
-  }
-
-  .planet {
-    position: absolute;
-    width: 80px;
-    height: 80px;
-    cursor: grab;
-    user-select: none;
-    transition: transform 0.3s;
-    touch-action: none;
-  }
-
-  .planet.correct {
-    transform: scale(1.3);
-    animation: bounce 0.6s;
-  }
-
-  @keyframes bounce {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.3); }
-  }
-
-  .target {
-    position: absolute;
-    width: 90px;
-    height: 90px;
-    border: 2px dashed rgba(255,255,255,0.25);
-    border-radius: 50%;
-    pointer-events: none;
-  }
-
-  #message {
-    font-size: 1.4em;
-    margin-top: 15px;
-    color: #9ef7ff;
-    text-shadow: 1px 1px 3px #000;
-  }
-</style>
+  <meta charset="UTF-8">
+  <title>Το Ηλιακό Σύστημα</title>
+  <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-  <h1>Βάλε τους Πλανήτες στη Σωστή Θέση! ☀️🪐</h1>
-  <div id="gameArea">
-    <!-- Ήλιος -->
-    <img id="sun" src="sun.gif" alt="Ήλιος">
+  <!-- Ήλιος -->
+  <img id="sun" src="images/Sun.gif" alt="Ήλιος">
 
-    <!-- Θέσεις γύρω από τον Ήλιο -->
-    <div class="target" id="target1" style="left:100px; top:220px;"></div>
-    <div class="target" id="target2" style="left:250px; top:150px;"></div>
-    <div class="target" id="target3" style="left:400px; top:110px;"></div>
-    <div class="target" id="target4" style="left:550px; top:90px;"></div>
-    <div class="target" id="target5" style="left:700px; top:110px;"></div>
-    <div class="target" id="target6" style="left:800px; top:200px;"></div>
-    <div class="target" id="target7" style="left:900px; top:300px;"></div>
-    <div class="target" id="target8" style="left:950px; top:420px;"></div>
-
-    <!-- Εικόνες πλανητών - βάλτε εδώ τα δικά σας GIFs στο φάκελο 'planets' -->
-    <img src="planets/planet1.gif" class="planet" id="planet1" draggable="true">
-    <img src="planets/planet2.gif" class="planet" id="planet2" draggable="true">
-    <img src="planets/planet3.gif" class="planet" id="planet3" draggable="true">
-    <img src="planets/planet4.gif" class="planet" id="planet4" draggable="true">
-    <img src="planets/planet5.gif" class="planet" id="planet5" draggable="true">
-    <img src="planets/planet6.gif" class="planet" id="planet6" draggable="true">
-    <img src="planets/planet7.gif" class="planet" id="planet7" draggable="true">
-    <img src="planets/planet8.gif" class="planet" id="planet8" draggable="true">
+  <!-- Πλανήτες -->
+  <div id="planets-container">
+    <img src="images/mercury.gif" id="planet1" class="planet" data-name="Ερμής">
+    <img src="images/venus.gif" id="planet2" class="planet" data-name="Αφροδίτη">
+    <img src="images/earth.gif" id="planet3" class="planet" data-name="Γη">
+    <img src="images/mars.gif" id="planet4" class="planet" data-name="Άρης">
+    <img src="images/jupiter.gif" id="planet5" class="planet" data-name="Δίας">
+    <img src="images/saturn.gif" id="planet6" class="planet" data-name="Κρόνος">
+    <img src="images/uranus.gif" id="planet7" class="planet" data-name="Ουρανός">
+    <img src="images/neptune.gif" id="planet8" class="planet" data-name="Ποσειδώνας">
   </div>
 
-  <div id="message"></div>
+  <!-- Περιοχές Στόχων -->
+  <div id="targets">
+    <div id="target1" class="target-zone"></div>
+    <div id="target2" class="target-zone"></div>
+    <div id="target3" class="target-zone"></div>
+    <div id="target4" class="target-zone"></div>
+    <div id="target5" class="target-zone"></div>
+    <div id="target6" class="target-zone"></div>
+    <div id="target7" class="target-zone"></div>
+    <div id="target8" class="target-zone"></div>
+  </div>
 
-  <!-- Ήχοι επιβράβευσης -->
-  <audio id="sound1" src="sounds/bravo1.wav" preload="auto"></audio>
-  <audio id="sound2" src="sounds/bravo2.wav" preload="auto"></audio>
-  <audio id="sound3" src="sounds/bravo3.wav" preload="auto"></audio>
+  <!-- Μήνυμα Επιτυχίας -->
+  <div id="success-message">🎉 Μπράβο μικρέ αστροναύτη! 🎉</div>
 
-<script>
-const planets = Array.from(document.querySelectorAll(".planet"));
-const targets = document.querySelectorAll(".target");
+  <script>
+    // === Θέσεις των πλανητών (σε κύκλο γύρω από τον Ήλιο) ===
+    const targets = [
+      {x: 350, y: 500}, // Ερμής
+      {x: 500, y: 470}, // Αφροδίτη
+      {x: 650, y: 430}, // Γη
+      {x: 800, y: 390}, // Άρης
+      {x: 970, y: 350}, // Δίας
+      {x: 1150, y: 320}, // Κρόνος
+      {x: 1320, y: 300}, // Ουρανός
+      {x: 1480, y: 280}  // Ποσειδώνας
+    ];
 
-// Αντιστοίχιση πλανητών με ήχους και φωνές
-const planetAudioData = {
-  planet1: { name: "Ερμής", sound: new Audio("sounds/planet1.wav"), voice: new Audio("sounds/planet1_voice.mp3") },
-  planet2: { name: "Αφροδίτη", sound: new Audio("sounds/planet2.wav"), voice: new Audio("sounds/planet2_voice.mp3") },
-  planet3: { name: "Γη", sound: new Audio("sounds/planet3.wav"), voice: new Audio("sounds/planet3_voice.mp3") },
-  planet4: { name: "Άρης", sound: new Audio("sounds/planet4.wav"), voice: new Audio("sounds/planet4_voice.mp3") },
-  planet5: { name: "Δίας", sound: new Audio("sounds/planet5.wav"), voice: new Audio("sounds/planet5_voice.mp3") },
-  planet6: { name: "Κρόνος", sound: new Audio("sounds/planet6.wav"), voice: new Audio("sounds/planet6_voice.mp3") },
-  planet7: { name: "Ουρανός", sound: new Audio("sounds/planet7.wav"), voice: new Audio("sounds/planet7_voice.mp3") },
-  planet8: { name: "Ποσειδώνας", sound: new Audio("sounds/planet8.wav"), voice: new Audio("sounds/planet8_voice.mp3") },
-};
+    const planets = document.querySelectorAll('.planet');
+    const successMessage = document.getElementById('success-message');
+    let placedCount = 0;
 
-let placed = 0;
-
-// --- Drag & Drop (Touch-friendly) ---
-planets.forEach(p => {
-  p.addEventListener('pointerdown', pointerDown);
-  p.addEventListener('dragstart', dragStart);
-});
-
-let currentDrag = null;
-let offsetX = 0, offsetY = 0;
-
-function pointerDown(e) {
-  e.preventDefault();
-  const p = e.currentTarget;
-  currentDrag = p;
-  p.setPointerCapture(e.pointerId);
-  const rect = p.getBoundingClientRect();
-  offsetX = e.clientX - rect.left;
-  offsetY = e.clientY - rect.top;
-
-  function move(ev) {
-    const area = document.getElementById('gameArea').getBoundingClientRect();
-    let x = ev.clientX - area.left - offsetX;
-    let y = ev.clientY - area.top - offsetY;
-    x = Math.max(0, Math.min(area.width - rect.width, x));
-    y = Math.max(0, Math.min(area.height - rect.height, y));
-    p.style.left = x + 'px';
-    p.style.top = y + 'px';
-  }
-
-  function up(ev) {
-    p.releasePointerCapture(e.pointerId);
-    document.removeEventListener('pointermove', move);
-    document.removeEventListener('pointerup', up);
-    checkDrop(p);
-  }
-
-  document.addEventListener('pointermove', move);
-  document.addEventListener('pointerup', up);
-}
-
-// fallback HTML5 drag
-function dragStart(e) {
-  e.dataTransfer.setData("text", e.target.id);
-}
-
-function dragOver(e) {
-  e.preventDefault();
-}
-
-function drop(e, targetNum) {
-  e.preventDefault();
-  const planetId = e.dataTransfer.getData("text");
-  const planet = document.getElementById(planetId);
-  checkDrop(planet, e.target);
-}
-
-// --- Έλεγχος σωστής τοποθέτησης ---
-function checkDrop(planet, dropTarget=null) {
-  let matched = false;
-  let correctTargetId = 'target' + planet.id.replace('planet','');
-
-  if (dropTarget) {
-    if (dropTarget.id === correctTargetId) matched = true;
-  } else {
-    const pRect = planet.getBoundingClientRect();
-    targets.forEach(t => {
-      const tRect = t.getBoundingClientRect();
-      const overlap = !(pRect.right < tRect.left || pRect.left > tRect.right || pRect.bottom < tRect.top || pRect.top > tRect.bottom);
-      if (overlap && t.id === correctTargetId) matched = true;
+    // Δημιουργία στόχων
+    targets.forEach((pos, i) => {
+      const target = document.getElementById('target' + (i + 1));
+      target.style.left = pos.x + 'px';
+      target.style.top = pos.y + 'px';
     });
-  }
 
-  if (matched) {
-    const targetEl = document.getElementById(correctTargetId);
-    planet.style.left = targetEl.style.left;
-    planet.style.top = targetEl.style.top;
-    planet.classList.add('correct');
-    planet.draggable = false;
-    planet.style.pointerEvents = 'none';
-    placed++;
+    // Ήχοι για κάθε πλανήτη
+    const sounds = [
+      new Audio('sounds/planet1_voice.mp3'),
+      new Audio('sounds/planet2_voice.mp3'),
+      new Audio('sounds/planet3_voice.mp3'),
+      new Audio('sounds/planet4_voice.mp3'),
+      new Audio('sounds/planet5_voice.mp3'),
+      new Audio('sounds/planet6_voice.mp3'),
+      new Audio('sounds/planet7_voice.mp3'),
+      new Audio('sounds/planet8_voice.mp3')
+    ];
+    const finale = new Audio('sounds/finale.mp3');
 
-    const data = planetAudioData[planet.id];
-    if (data) {
-      data.sound.currentTime = 0;
-      data.sound.play();
-      setTimeout(() => {
-        data.voice.currentTime = 0;
-        data.voice.play();
-      }, 600);
-    }
+    // Τυχαία αρχική θέση κάθε πλανήτη
+    planets.forEach(planet => {
+      planet.style.left = Math.random() * (window.innerWidth - 150) + 'px';
+      planet.style.top = Math.random() * (window.innerHeight - 200) + 'px';
+    });
 
-    document.getElementById('message').innerText = `Μπράβο! Αυτός είναι ο ${data.name}! 🌟`;
+    // Λειτουργία μετακίνησης (drag & drop)
+    planets.forEach((planet, index) => {
+      planet.onmousedown = function (e) {
+        let shiftX = e.clientX - planet.getBoundingClientRect().left;
+        let shiftY = e.clientY - planet.getBoundingClientRect().top;
 
-    if (placed === targets.length) {
-      document.getElementById('message').innerText = 'Τα κατάφερες! Όλοι οι πλανήτες είναι στη θέση τους! 🚀🌞';
-      const finalSound = new Audio("sounds/finale.mp3");
-      finalSound.play();
-    }
+        function moveAt(pageX, pageY) {
+          planet.style.left = pageX - shiftX + 'px';
+          planet.style.top = pageY - shiftY + 'px';
+        }
 
-  } else {
-    document.getElementById('message').innerText = 'Δοκίμασε ξανά!';
-  }
-}
+        function onMouseMove(e) {
+          moveAt(e.pageX, e.pageY);
+        }
 
-// --- Drop listeners + random αρχικές θέσεις ---
-targets.forEach((target, index) => {
-  target.addEventListener('dragover', dragOver);
-  target.addEventListener('drop', (e) => drop(e, index+1));
-});
+        document.addEventListener('mousemove', onMouseMove);
 
-window.addEventListener('load', () => {
-  const startY = Math.min(window.innerHeight*0.75, 650);
-  const startXPositions = shuffle([150, 250, 300, 350, 450, 550, 650, 750, 900, 1050, 1150]);
-  const used = startXPositions.slice(0, planets.length);
-  planets.forEach((planet, i) => {
-    planet.style.left = used[i] + 'px';
-    planet.style.top = startY + 'px';
-  });
-});
+        planet.onmouseup = function () {
+          document.removeEventListener('mousemove', onMouseMove);
+          planet.onmouseup = null;
 
-// Fisher-Yates shuffle
-function shuffle(array) {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
-  }
-  return array;
-}
-</script>
+          // Έλεγχος αν έπεσε κοντά στη σωστή θέση
+          const target = targets[index];
+          const dx = parseInt(planet.style.left) - target.x;
+          const dy = parseInt(planet.style.top) - target.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+
+          if (distance < 80) {
+            planet.style.left = target.x + 'px';
+            planet.style.top = target.y + 'px';
+            planet.style.pointerEvents = 'none';
+            document.getElementById('target' + (index + 1)).classList.add('correct');
+            sounds[index].play();
+            placedCount++;
+
+            if (placedCount === planets.length) {
+              successMessage.style.display = 'block';
+              finale.play();
+            }
+          }
+        };
+      };
+
+      planet.ondragstart = () => false;
+    });
+  </script>
 </body>
 </html>

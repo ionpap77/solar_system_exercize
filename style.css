@@ -1,77 +1,165 @@
-/* === Γενικό Στυλ Σελίδας === */
+/* Responsive styles for Solar System drag & drop */
 body {
   margin: 0;
-  padding: 0;
   overflow: hidden;
-  background-image: url('images/background.jpg');
-  background-size: cover;
-  background-position: center;
-  font-family: 'Comic Sans MS', sans-serif;
+  text-align: center;
+  color: white;
+  font-family: "Comic Sans MS", sans-serif;
+  background: transparent; /* ✅ Κανένα λευκό φόντο */
 }
 
-/* === Ήλιος === */
+h1 {
+  margin: 10px;
+  font-size: 2.5vw;
+  color: #ffdf6c;
+  text-shadow: 2px 2px 6px #000;
+  background: transparent; /* ✅ δεν έχει χρώμα φόντου */
+  background-color: transparent;
+  position: relative;
+  z-index: 2; /* πάνω από την εικόνα */
+}
+
+#space {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Background image covers fully */
+#background {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Sun bottom-left, responsive size, gentle glow */
 #sun {
   position: absolute;
-  bottom: 20px;
-  left: 20px;
-  width: 250px; /* λίγο πιο μεγάλος */
-  z-index: 2;
+  left: 0%;
+  bottom: 20%;
+  transform: translate(-50%, 0);
+  width: 50vw;
+  max-width: 550px;
+  height: auto;
+  animation: glow 2s infinite alternate;
+  z-index: 1;
+  pointer-events: none;
+}
+@keyframes glow {
+  from { filter: drop-shadow(0 0 10px yellow); }
+  to   { filter: drop-shadow(0 0 25px orange); }
 }
 
-/* === Πλανήτες === */
+/* Targets (visible circles) */
+.target {
+  position: absolute;
+  width: 9vw;
+  height: 9vw;
+  min-width: 48px;
+  min-height: 48px;
+  border-radius: 50%;
+  border: 2px dashed rgba(255, 255, 255, 0.6);
+  background-color: rgba(255, 255, 255, 0.06);
+  box-sizing: border-box;
+  z-index: 1;
+  pointer-events: none;
+}
+/* Turn green when correct */
+.target.correct {
+  border-color: lime;
+  background-color: rgba(50, 205, 50, 0.18);
+  box-shadow: 0 0 12px rgba(50,205,50,0.5);
+}
+
+/* Planets */
 .planet {
   position: absolute;
+  width: 8vw;
+  max-width: 120px;
+  height: auto;
   cursor: grab;
   user-select: none;
-  transition: transform 0.2s ease;
+  transition: transform 0.3s;
+  z-index: 2;
+}
+.planet.correct {
+  transform: scale(1.15);
 }
 
-.planet:active {
-  cursor: grabbing;
-  transform: scale(1.1);
-}
-
-/* === Αναλογίες Πλανητών === */
-#planet1 { width: 60px; }   /* Ερμής – μικρός */
-#planet2 { width: 80px; }   /* Αφροδίτη */
-#planet3 { width: 85px; }   /* Γη */
-#planet4 { width: 70px; }   /* Άρης */
-#planet5 { width: 130px; }  /* Δίας – ο μεγαλύτερος */
-#planet6 { width: 110px; }  /* Κρόνος – με δακτύλιο */
-#planet7 { width: 90px; }   /* Ουρανός */
-#planet8 { width: 85px; }   /* Ποσειδώνας */
-
-/* === Περιοχή Στόχων === */
-.target-zone {
+/* Message */
+#message {
   position: absolute;
-  border: 2px dashed rgba(255, 255, 255, 0.5);
-  border-radius: 50%;
-  width: 100px;
-  height: 100px;
-  pointer-events: none;
-  transition: border 0.3s;
-}
-
-.target-zone.correct {
-  border: 3px solid limegreen;
-}
-
-/* === Μήνυμα Επιτυχίας === */
-#success-message {
-  position: absolute;
-  top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 2em;
-  color: yellow;
-  background: rgba(0, 0, 0, 0.6);
-  padding: 20px 30px;
-  border-radius: 20px;
-  display: none;
-  animation: pop 0.6s ease;
+  top: 2vh;
+  transform: translateX(-50%);
+  font-size: 2.2vw;
+  color: #9ef7ff;
+  text-shadow: 1px 1px 3px #000;
+  z-index: 3;
 }
 
-@keyframes pop {
-  from { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
-  to { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+/* -----------------------------
+   Ειδικά μεγέθη για κάθε πλανήτη
+   ----------------------------- */
+
+#mercury {
+  width: 4vw;  /* μικρός */
+  max-width: 70px;
+}
+
+#venus {
+  width: 6vw;
+  max-width: 100px;
+}
+
+#earth {
+  width: 5.5vw;
+  max-width: 90px;
+}
+
+#mars {
+  width: 4.5vw;
+  max-width: 75px;
+}
+
+#jupiter {
+  width: 7.5vw;  /* μεγαλύτερος */
+  max-width: 150px;
+}
+
+#saturn {
+  width: 24vw;
+  max-width: 240px;
+}
+
+#uranus {
+  width: 10vw;
+  max-width: 210px;
+}
+
+#neptune {
+  width: 6.5vw;
+  max-width: 100px;
+}
+
+
+/* Responsive tweaks */
+@media (max-width: 900px) {
+  h1 { font-size: 4vw; }
+  #sun { width: 30vw; left: 22%; bottom: -8%; }
+  .planet { width: 10vw; max-width: 90px; }
+  .target { width: 11vw; height: 11vw; }
+  #message { font-size: 3.2vw; }
+}
+@media (max-width: 600px) {
+  h1 { font-size: 5vw; }
+  #sun { width: 35vw; left: 25%; bottom: -10%; }
+  .planet { width: 12vw; max-width: 80px; }
+  .target { width: 12vw; height: 12vw; border-color: rgba(255,255,255,0.8); }
+  #message { font-size: 4vw; }
 }

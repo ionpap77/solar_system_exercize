@@ -1,129 +1,148 @@
 <!DOCTYPE html>
 <html lang="el">
 <head>
-  <meta charset="UTF-8">
-  <title>Το Ηλιακό Σύστημα</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ηλιακό Σύστημα</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <!-- Ήλιος -->
-  <img id="sun" src="images/Sun.gif" alt="Ήλιος">
+  <h1>Βάλε τους Πλανήτες στη Σωστή Θέση! ☀️🪐</h1>
 
-  <!-- Πλανήτες -->
-  <div id="planets-container">
-    <img src="images/mercury.gif" id="planet1" class="planet" data-name="Ερμής">
-    <img src="images/venus.gif" id="planet2" class="planet" data-name="Αφροδίτη">
-    <img src="images/earth.gif" id="planet3" class="planet" data-name="Γη">
-    <img src="images/mars.gif" id="planet4" class="planet" data-name="Άρης">
-    <img src="images/jupiter.gif" id="planet5" class="planet" data-name="Δίας">
-    <img src="images/saturn.gif" id="planet6" class="planet" data-name="Κρόνος">
-    <img src="images/uranus.gif" id="planet7" class="planet" data-name="Ουρανός">
-    <img src="images/neptune.gif" id="planet8" class="planet" data-name="Ποσειδώνας">
+  <div id="space">
+    <img id="background" src="images/background.jpg" alt="Διάστημα" />
+    <img id="sun" src="images/Sun.gif" alt="Ήλιος" />
+
+    <!-- 🎯 Θέσεις στόχων (ίδια διάταξη/ονόματα) -->
+    <div id="target1" class="target" style="left:15%; top:35%;"></div>
+    <div id="target2" class="target" style="left:25%; top:35%;"></div>
+    <div id="target3" class="target" style="left:35%; top:35%;"></div>
+    <div id="target4" class="target" style="left:45%; top:35%;"></div>
+    <div id="target5" class="target" style="left:55%; top:35%;"></div>
+    <div id="target6" class="target" style="left:65%; top:35%;"></div>
+    <div id="target7" class="target" style="left:75%; top:35%;"></div>
+    <div id="target8" class="target" style="left:85%; top:35%;"></div>
+
+    <!-- 🪐 Πλανήτες (ίδια ονόματα/μονοπάτια όπως ζήτησες) -->
+    <img src="images/mercury.gif" id="mercury" class="planet" draggable="true" alt="Ερμής" />
+    <img src="images/venus.gif" id="venus" class="planet" draggable="true" alt="Αφροδίτη" />
+    <img src="images/earth.gif" id="earth" class="planet" draggable="true" alt="Γη" />
+    <img src="images/mars.gif" id="mars" class="planet" draggable="true" alt="Άρης" />
+    <img src="images/jupiter.gif" id="jupiter" class="planet" draggable="true" alt="Δίας" />
+    <img src="images/saturn.gif" id="saturn" class="planet" draggable="true" alt="Κρόνος" />
+    <img src="images/uranus.gif" id="uranus" class="planet" draggable="true" alt="Ουρανός" />
+    <img src="images/neptune.gif" id="neptune" class="planet" draggable="true" alt="Ποσειδώνας" />
+
+    <div id="message"></div>
   </div>
 
-  <!-- Περιοχές Στόχων -->
-  <div id="targets">
-    <div id="target1" class="target-zone"></div>
-    <div id="target2" class="target-zone"></div>
-    <div id="target3" class="target-zone"></div>
-    <div id="target4" class="target-zone"></div>
-    <div id="target5" class="target-zone"></div>
-    <div id="target6" class="target-zone"></div>
-    <div id="target7" class="target-zone"></div>
-    <div id="target8" class="target-zone"></div>
-  </div>
-
-  <!-- Μήνυμα Επιτυχίας -->
-  <div id="success-message">🎉 Μπράβο μικρέ αστροναύτη! 🎉</div>
+  <!-- 🔊 Ήχοι (ίδιες ονομασίες) -->
+  <audio id="sound-mercury" src="sounds/planet1_voice.mp3" preload="auto"></audio>
+  <audio id="sound-venus"   src="sounds/planet2_voice.mp3" preload="auto"></audio>
+  <audio id="sound-earth"   src="sounds/planet3_voice.mp3" preload="auto"></audio>
+  <audio id="sound-mars"    src="sounds/planet4_voice.mp3" preload="auto"></audio>
+  <audio id="sound-jupiter" src="sounds/planet5_voice.mp3" preload="auto"></audio>
+  <audio id="sound-saturn"  src="sounds/planet6_voice.mp3" preload="auto"></audio>
+  <audio id="sound-uranus"  src="sounds/planet7_voice.mp3" preload="auto"></audio>
+  <audio id="sound-neptune" src="sounds/planet8_voice.mp3" preload="auto"></audio>
+  <audio id="sound-finale"  src="sounds/finale.mp3" preload="auto"></audio>
 
   <script>
-    // === Θέσεις των πλανητών (σε κύκλο γύρω από τον Ήλιο) ===
-    const targets = [
-      {x: 350, y: 500}, // Ερμής
-      {x: 500, y: 470}, // Αφροδίτη
-      {x: 650, y: 430}, // Γη
-      {x: 800, y: 390}, // Άρης
-      {x: 970, y: 350}, // Δίας
-      {x: 1150, y: 320}, // Κρόνος
-      {x: 1320, y: 300}, // Ουρανός
-      {x: 1480, y: 280}  // Ποσειδώνας
-    ];
+    // Map each planet to its correct target and sound element id
+    const mapping = {
+      mercury:  { target: 'target1', sound: 'sound-mercury' },
+      venus:    { target: 'target2', sound: 'sound-venus'   },
+      earth:    { target: 'target3', sound: 'sound-earth'   },
+      mars:     { target: 'target4', sound: 'sound-mars'    },
+      jupiter:  { target: 'target5', sound: 'sound-jupiter' },
+      saturn:   { target: 'target6', sound: 'sound-saturn'  },
+      uranus:   { target: 'target7', sound: 'sound-uranus'  },
+      neptune:  { target: 'target8', sound: 'sound-neptune' }
+    };
 
-    const planets = document.querySelectorAll('.planet');
-    const successMessage = document.getElementById('success-message');
-    let placedCount = 0;
+    const planets = Array.from(document.querySelectorAll('.planet'));
+    const targets = Array.from(document.querySelectorAll('.target'));
+    const container = document.getElementById('space');
+    const msg = document.getElementById('message');
+    const finale = document.getElementById('sound-finale');
+    let placed = 0;
 
-    // Δημιουργία στόχων
-    targets.forEach((pos, i) => {
-      const target = document.getElementById('target' + (i + 1));
-      target.style.left = pos.x + 'px';
-      target.style.top = pos.y + 'px';
-    });
+    // Random start positions (slightly higher so they don't get cut)
+window.addEventListener('load', () => {
+  planets.forEach((p) => {
+    const xvw = 10 + Math.random() * 80; // 10..90 vw
+    const yvh = 55 + Math.random() * 20; // 55..75 vh (πιο πάνω)
+    p.style.left = xvw + 'vw';
+    p.style.top  = yvh + 'vh';
+  });
+});
 
-    // Ήχοι για κάθε πλανήτη
-    const sounds = [
-      new Audio('sounds/planet1_voice.mp3'),
-      new Audio('sounds/planet2_voice.mp3'),
-      new Audio('sounds/planet3_voice.mp3'),
-      new Audio('sounds/planet4_voice.mp3'),
-      new Audio('sounds/planet5_voice.mp3'),
-      new Audio('sounds/planet6_voice.mp3'),
-      new Audio('sounds/planet7_voice.mp3'),
-      new Audio('sounds/planet8_voice.mp3')
-    ];
-    const finale = new Audio('sounds/finale.mp3');
-
-    // Τυχαία αρχική θέση κάθε πλανήτη
+    // HTML5 drag
     planets.forEach(planet => {
-      planet.style.left = Math.random() * (window.innerWidth - 150) + 'px';
-      planet.style.top = Math.random() * (window.innerHeight - 200) + 'px';
+      planet.addEventListener('dragstart', e => {
+        e.dataTransfer.setData('text/plain', planet.id);
+      });
     });
 
-    // Λειτουργία μετακίνησης (drag & drop)
-    planets.forEach((planet, index) => {
-      planet.onmousedown = function (e) {
-        let shiftX = e.clientX - planet.getBoundingClientRect().left;
-        let shiftY = e.clientY - planet.getBoundingClientRect().top;
+    container.addEventListener('dragover', e => e.preventDefault());
 
-        function moveAt(pageX, pageY) {
-          planet.style.left = pageX - shiftX + 'px';
-          planet.style.top = pageY - shiftY + 'px';
-        }
+    container.addEventListener('drop', e => {
+      e.preventDefault();
+      const id = e.dataTransfer.getData('text');
+      const planet = document.getElementById(id);
+      const rect = container.getBoundingClientRect();
+      const x = ((e.clientX - rect.left) / rect.width) * 100;
+      const y = ((e.clientY - rect.top) / rect.height) * 100;
 
-        function onMouseMove(e) {
-          moveAt(e.pageX, e.pageY);
-        }
+      // Place near drop; will snap if over correct target
+      planet.style.left = x + '%';
+      planet.style.top  = y + '%';
 
-        document.addEventListener('mousemove', onMouseMove);
+      handleSnap(planet);
+    });
 
-        planet.onmouseup = function () {
-          document.removeEventListener('mousemove', onMouseMove);
-          planet.onmouseup = null;
+    function handleSnap(planet) {
+      const map = mapping[planet.id];
+      if (!map) return;
+      const target = document.getElementById(map.target);
 
-          // Έλεγχος αν έπεσε κοντά στη σωστή θέση
-          const target = targets[index];
-          const dx = parseInt(planet.style.left) - target.x;
-          const dy = parseInt(planet.style.top) - target.y;
-          const distance = Math.sqrt(dx * dx + dy * dy);
+      const cRect = container.getBoundingClientRect();
+      const pRect = planet.getBoundingClientRect();
+      const tRect = target.getBoundingClientRect();
 
-          if (distance < 80) {
-            planet.style.left = target.x + 'px';
-            planet.style.top = target.y + 'px';
-            planet.style.pointerEvents = 'none';
-            document.getElementById('target' + (index + 1)).classList.add('correct');
-            sounds[index].play();
-            placedCount++;
+      const overlap = !(pRect.right < tRect.left ||
+                        pRect.left  > tRect.right ||
+                        pRect.bottom < tRect.top ||
+                        pRect.top > tRect.bottom);
 
-            if (placedCount === planets.length) {
-              successMessage.style.display = 'block';
-              finale.play();
-            }
+      if (overlap) {
+        // center planet on target
+        const centerX = ((tRect.left - cRect.left) + tRect.width/2 - pRect.width/2);
+        const centerY = ((tRect.top  - cRect.top ) + tRect.height/2 - pRect.height/2);
+        const leftPerc = (centerX / cRect.width) * 100;
+        const topPerc  = (centerY / cRect.height) * 100;
+        planet.style.left = leftPerc + '%';
+        planet.style.top  = topPerc + '%';
+
+        if (!planet.classList.contains('correct')) {
+          planet.classList.add('correct');
+          target.classList.add('correct');
+          planet.draggable = false;
+          planet.style.pointerEvents = 'none';
+          placed += 1;
+
+          const s = document.getElementById(map.sound);
+          if (s) { try { s.currentTime = 0; s.play(); } catch(e){} }
+          msg.textContent = "Μπράβο!";
+          if (placed === planets.length) {
+            msg.textContent = "Μπράβο μικρέ αστροναύτη! 🚀🌕";
+            if (finale) { try { finale.currentTime = 0; finale.play(); } catch(e){} }
           }
-        };
-      };
-
-      planet.ondragstart = () => false;
-    });
+        }
+      } else {
+        msg.textContent = "Δοκίμασε ξανά!";
+      }
+    }
   </script>
 </body>
 </html>

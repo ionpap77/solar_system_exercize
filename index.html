@@ -47,102 +47,112 @@
   <audio id="sound-neptune" src="sounds/planet8_voice.mp3" preload="auto"></audio>
   <audio id="sound-finale"  src="sounds/finale.mp3" preload="auto"></audio>
 
-  <script>
-    // Map each planet to its correct target and sound element id
-    const mapping = {
-      mercury:  { target: 'target1', sound: 'sound-mercury' },
-      venus:    { target: 'target2', sound: 'sound-venus'   },
-      earth:    { target: 'target3', sound: 'sound-earth'   },
-      mars:     { target: 'target4', sound: 'sound-mars'    },
-      jupiter:  { target: 'target5', sound: 'sound-jupiter' },
-      saturn:   { target: 'target6', sound: 'sound-saturn'  },
-      uranus:   { target: 'target7', sound: 'sound-uranus'  },
-      neptune:  { target: 'target8', sound: 'sound-neptune' }
-    };
+ <script>
+const mapping = {
+  mercury:  { target: 'target1', sound: 'sound-mercury' },
+  venus:    { target: 'target2', sound: 'sound-venus'   },
+  earth:    { target: 'target3', sound: 'sound-earth'   },
+  mars:     { target: 'target4', sound: 'sound-mars'    },
+  jupiter:  { target: 'target5', sound: 'sound-jupiter' },
+  saturn:   { target: 'target6', sound: 'sound-saturn'  },
+  uranus:   { target: 'target7', sound: 'sound-uranus'  },
+  neptune:  { target: 'target8', sound: 'sound-neptune' }
+};
 
-    const planets = Array.from(document.querySelectorAll('.planet'));
-    const targets = Array.from(document.querySelectorAll('.target'));
-    const container = document.getElementById('space');
-    const msg = document.getElementById('message');
-    const finale = document.getElementById('sound-finale');
-    let placed = 0;
+const planets = Array.from(document.querySelectorAll('.planet'));
+const targets = Array.from(document.querySelectorAll('.target'));
+const container = document.getElementById('space');
+const msg = document.getElementById('message');
+const finale = document.getElementById('sound-finale');
+let placed = 0;
+let currentPlanet = null;
+let offsetX = 0, offsetY = 0;
 
-    // Random start positions (slightly higher so they don't get cut)
+// Θέσεις εκκίνησης (πιο ψηλά)
 window.addEventListener('load', () => {
-  planets.forEach((p) => {
-    const xvw = 10 + Math.random() * 80; // 10..90 vw
-    const yvh = 55 + Math.random() * 20; // 55..75 vh (πιο πάνω)
+  planets.forEach(p => {
+    const xvw = 10 + Math.random() * 80;
+    const yvh = 55 + Math.random() * 20;
     p.style.left = xvw + 'vw';
     p.style.top  = yvh + 'vh';
   });
 });
 
-    // HTML5 drag
-    planets.forEach(planet => {
-      planet.addEventListener('dragstart', e => {
-        e.dataTransfer.setData('text/plain', planet.id);
-      });
-    });
+// Ενεργοποίηση drag σε κινητά + desktop
+planets.forEach(p => {
+  p.addEventListener('pointerdown', startDrag);
+});
 
-    container.addEventListener('dragover', e => e.preventDefault());
+function startDrag(e) {
+  e.preventDefault();
+  currentPlanet = e.currentTarget;
+  const rect = currentPlanet.getBoundingClientRect();
+  const area = container.getBoundingClientRect();
+  offsetX = e.clientX - rect.left;
+  offsetY = e.clientY - rect.top;
 
-    container.addEventListener('drop', e => {
-      e.preventDefault();
-      const id = e.dataTransfer.getData('text');
-      const planet = document.getElementById(id);
-      const rect = container.getBoundingClientRect();
-      const x = ((e.clientX - rect.left) / rect.width) * 100;
-      const y = ((e.clientY - rect.top) / rect.height) * 100;
+  currentPlanet.setPointerCapture(e.pointerId);
+  currentPlanet.addEventListener('pointermove', moveDrag);
+  currentPlanet.addEventListener('pointerup', endDrag);
+}
 
-      // Place near drop; will snap if over correct target
-      planet.style.left = x + '%';
-      planet.style.top  = y + '%';
+function moveDrag(e) {
+  if (!currentPlanet) return;
+  const area = container.getBoundingClientRect();
+  const x = e.clientX - area.left - offsetX;
+  const y = e.clientY - area.top - offsetY;
+  currentPlanet.style.left = (x / area.width * 100) + '%';
+  currentPlanet.style.top  = (y / area.height * 100) + '%';
+}
 
-      handleSnap(planet);
-    });
+function endDrag(e) {
+  if (!currentPlanet) return;
+  checkDrop(currentPlanet);
+  currentPlanet.releasePointerCapture(e.pointerId);
+  currentPlanet.removeEventListener('pointermove', moveDrag);
+  currentPlanet.removeEventListener('pointerup', endDrag);
+  currentPlanet = null;
+}
 
-    function handleSnap(planet) {
-      const map = mapping[planet.id];
-      if (!map) return;
-      const target = document.getElementById(map.target);
+// Έλεγχος αν μπήκε σωστά
+function checkDrop(planet) {
+  const map = mapping[planet.id];
+  if (!map) return;
+  const target = document.getElementById(map.target);
 
-      const cRect = container.getBoundingClientRect();
-      const pRect = planet.getBoundingClientRect();
-      const tRect = target.getBoundingClientRect();
+  const cRect = container.getBoundingClientRect();
+  const pRect = planet.getBoundingClientRect();
+  const tRect = target.getBoundingClientRect();
 
-      const overlap = !(pRect.right < tRect.left ||
-                        pRect.left  > tRect.right ||
-                        pRect.bottom < tRect.top ||
-                        pRect.top > tRect.bottom);
+  const overlap = !(pRect.right < tRect.left ||
+                    pRect.left > tRect.right ||
+                    pRect.bottom < tRect.top ||
+                    pRect.top > tRect.bottom);
 
-      if (overlap) {
-        // center planet on target
-        const centerX = ((tRect.left - cRect.left) + tRect.width/2 - pRect.width/2);
-        const centerY = ((tRect.top  - cRect.top ) + tRect.height/2 - pRect.height/2);
-        const leftPerc = (centerX / cRect.width) * 100;
-        const topPerc  = (centerY / cRect.height) * 100;
-        planet.style.left = leftPerc + '%';
-        planet.style.top  = topPerc + '%';
+  if (overlap) {
+    const centerX = ((tRect.left - cRect.left) + tRect.width/2 - pRect.width/2);
+    const centerY = ((tRect.top  - cRect.top ) + tRect.height/2 - pRect.height/2);
+    planet.style.left = (centerX / cRect.width * 100) + '%';
+    planet.style.top  = (centerY / cRect.height * 100) + '%';
 
-        if (!planet.classList.contains('correct')) {
-          planet.classList.add('correct');
-          target.classList.add('correct');
-          planet.draggable = false;
-          planet.style.pointerEvents = 'none';
-          placed += 1;
+    if (!planet.classList.contains('correct')) {
+      planet.classList.add('correct');
+      target.classList.add('correct');
+      planet.style.pointerEvents = 'none';
+      placed++;
 
-          const s = document.getElementById(map.sound);
-          if (s) { try { s.currentTime = 0; s.play(); } catch(e){} }
-          msg.textContent = "Μπράβο!";
-          if (placed === planets.length) {
-            msg.textContent = "Μπράβο μικρέ αστροναύτη! 🚀🌕";
-            if (finale) { try { finale.currentTime = 0; finale.play(); } catch(e){} }
-          }
-        }
-      } else {
-        msg.textContent = "Δοκίμασε ξανά!";
+      const s = document.getElementById(map.sound);
+      if (s) { s.currentTime = 0; s.play(); }
+      msg.textContent = 'Μπράβο!';
+      if (placed === planets.length) {
+        msg.textContent = 'Μπράβο μικρέ αστροναύτη! 🚀🌕';
+        if (finale) { finale.currentTime = 0; finale.play(); }
       }
     }
-  </script>
+  } else {
+    msg.textContent = 'Δοκίμασε ξανά!';
+  }
+}
+</script>
 </body>
 </html>

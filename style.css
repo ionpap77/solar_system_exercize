@@ -163,3 +163,7 @@ h1 {
   .target { width: 12vw; height: 12vw; border-color: rgba(255,255,255,0.8); }
   #message { font-size: 4vw; }
 }
+/* Επιτρέπει drag με το δάχτυλο */
+.planet {
+  touch-action: none;  /* ✅ χωρίς αυτό, το Android μπλοκάρει το drag */
+}
